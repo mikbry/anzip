@@ -1,0 +1,44 @@
+{
+  "name": "anzip",
+  "version": "0.1.0",
+  "description": "Node Async Unzip Lib",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "repository": "https://github.com/mikbry/anzip.git",
+  "bugs": "https://github.com/mikbry/anzip/issues",
+  "homepage": "https://github.com/mikbry/anzip",
+  "author": "Mik <mik@miklabs.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "lint": "$(yarn bin)/eslint src",
+    "test": "cross-env NODE_ENV=test  $(yarn bin)/mocha  --require esm __tests__",
+    "coverage": "$(yarn bin)/nyc yarn test"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "yauzl": "^2.10.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-prettier": "^3.1.1",
+    "esm": "^3.2.25",
+    "mocha": "^6.2.2",
+    "nodemon": "^2.0.1",
+    "nyc": "^14.1.1",
+    "prettier": "^1.19.1",
+    "rollup": "^1.27.9"
+  },
+  "esm": {
+    "cjs": true
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "extends": [
+    "airbnb-base",
+    "plugin:import/errors",
+    "prettier"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 11
+  },
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "node": true,
+    "mocha": true
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "no-multi-assign": 0,
+    "arrow-body-style": [
+      "error",
+      "as-needed"
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "all",
+        "singleQuote": true,
+        "printWidth": 120
+      }
+    ],
+    "no-restricted-syntax": [
+      0,
+      "ForOfStatement"
+    ],
+    "max-classes-per-file": 0
+  }
+}

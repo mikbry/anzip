@@ -1,0 +1,13 @@
+{
+  "reporter": [
+    "html",
+    "text"
+  ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "require": [
+    "esm"
+  ],
+  "cache": true
+}

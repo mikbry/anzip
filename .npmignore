@@ -1,0 +1,8 @@
+src
+node_module
+*.DS_Store
+*config*
+yarn.lock
+coverage
+cov
+.nycrc

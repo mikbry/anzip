@@ -15,7 +15,9 @@
     "dev": "rollup -c -w",
     "lint": "$(yarn bin)/eslint src",
     "test": "cross-env NODE_ENV=test  $(yarn bin)/mocha  --require esm test",
-    "coverage": "$(yarn bin)/nyc _mocha  test"
+    "coverage": "$(yarn bin)/nyc _mocha  test",
+    "report-coverage": "yarn workspaces run report-coverage",
+    "prepublishOnly": "yarn build"
   },
   "engines": {
     "node": ">=10"
@@ -24,6 +26,8 @@
     "yauzl": "^2.10.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
     "chai": "^4.2.0",
     "cross-env": "^6.0.3",
     "eslint": "^6.7.2",
@@ -33,6 +37,7 @@
     "eslint-plugin-jest": "^23.1.1",
     "eslint-plugin-prettier": "^3.1.1",
     "esm": "^3.2.25",
+    "husky": "^3.1.0",
     "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
     "nyc": "^14.1.1",
@@ -41,5 +46,16 @@
   },
   "esm": {
     "cjs": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "commit-msg": "[[ -n $HUSKY_BYPASS ]] || commitlint -E HUSKY_GIT_PARAMS"
+    },
+    "commitlint": {
+      "extends": [
+        "@commitlint/config-conventional"
+      ]
+    }
   }
 }

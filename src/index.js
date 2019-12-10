@@ -7,29 +7,12 @@
  */
 import fs from 'fs';
 import path from 'path';
-import stream from 'stream';
 import util from 'util';
 import yauzl from 'yauzl';
 import ZipEntry from './ZipEntry';
 
 const fsp = fs.promises;
-const pipeline = util.promisify(stream.pipeline);
 const zipOpen = util.promisify(yauzl.open);
-
-const saveTo = async (entry, outputPath, flattenPath) => {
-  let { filename } = entry;
-  try {
-    if (!flattenPath && entry.directory) {
-      filename = path.join(entry.directory, filename);
-    }
-    const f = path.join(outputPath, filename);
-    const ws = fs.createWriteStream(f, { flags: 'a' });
-    await pipeline(entry.stream, ws);
-  } catch (err) {
-    // eslint-disable-next-line no-param-reassign
-    entry.error = err;
-  }
-};
 
 const anzip = async (
   filename,
@@ -37,9 +20,9 @@ const anzip = async (
     pattern,
     disableSave,
     outputContent,
-    outputPath = disableSave || outputContent ? undefined : './',
-    flattenPath,
     entryHandler,
+    outputPath = disableSave || outputContent || entryHandler ? undefined : './',
+    flattenPath,
     rules,
     ...opts
   } = {},
@@ -65,16 +48,19 @@ const anzip = async (
           if (!entryHandler || (await entryHandler(entry, data, opts))) {
             if (!disableSave && outputPath) {
               // saveTo
-              await saveTo(entry, outputPath, flattenPath);
+              await entry.saveTo(outputPath, flattenPath);
               data.saved = true;
             } else if (outputContent) {
               await entry.getContent();
             }
-            if (entry.content) {
-              data.content = entry.content;
-            }
           }
-          return entry.close();
+          if (entry.content) {
+            data.content = entry.content;
+          }
+          data.saved = entry.saved;
+          if (data.content || data.saved) {
+            return entry.close();
+          }
         }
       }
       // autodrain
@@ -85,6 +71,7 @@ const anzip = async (
       output.duration = hr[0] + hr[1] / 100000000;
       resolve(output);
     });
+    /* istanbul ignore next */
     zipFile.on('error', err => {
       reject(err);
     });

@@ -5,20 +5,24 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { expect } from 'chai';
 import path from 'path';
 import fs from 'fs';
+import rimraf from 'rimraf';
+import { expect } from 'chai';
 import anzip from '../src';
 
 const fsp = fs.promises;
 const TMP_PATH = './tmp_test';
 describe('anzip', async () => {
   before(async () => {
-    await fsp.mkdir(TMP_PATH, { recursive: true });
+    // Recursive is node >= 12
+    await fsp.mkdir(TMP_PATH);
   });
 
   after(async () => {
-    await fsp.rmdir(TMP_PATH, { recursive: true });
+    // Recursive is node >= 12
+    // await fsp.rmdir(TMP_PATH, { recursive: true });
+    rimraf.sync(TMP_PATH);
   });
 
   it('should extract an empty zip file', async () => {
@@ -30,7 +34,7 @@ describe('anzip', async () => {
 
   it('should extract a simple zip file', async () => {
     const outputPath = path.join(TMP_PATH, 't1');
-    await fsp.mkdir(outputPath, { recursive: true });
+    await fsp.mkdir(outputPath);
     const output = await anzip('./test/data/simple.zip', { outputPath });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
@@ -41,7 +45,7 @@ describe('anzip', async () => {
 
   it('should extract a simple zip file in content', async () => {
     const outputPath = path.join(TMP_PATH, 't2');
-    await fsp.mkdir(outputPath, { recursive: true });
+    await fsp.mkdir(outputPath);
     const output = await anzip('./test/data/simple.zip', { outputPath, outputContent: true });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
@@ -63,7 +67,7 @@ describe('anzip', async () => {
 
   it('should extract a simple zip one file from pattern', async () => {
     const outputPath = path.join(TMP_PATH, 't3');
-    await fsp.mkdir(outputPath, { recursive: true });
+    await fsp.mkdir(outputPath);
     const output = await anzip('./test/data/simple.zip', { outputPath, pattern: /^README.md/ });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(1);
@@ -86,6 +90,23 @@ describe('anzip', async () => {
     const output = await anzip('./test/data/simple.zip', { entryHandler });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
+    expect(output.files[0].name).to.equal('README.md');
+    expect(output.files[0].saved).to.equal(true);
+    const stat = await fsp.stat(path.join(outputPath, output.files[0].name));
+    expect(stat.isFile()).to.equal(true);
+  });
+
+  it('should extract a simple zip using rules', async () => {
+    const outputPath = path.join(TMP_PATH, 't5');
+    await fsp.mkdir(outputPath);
+    const output = await anzip('./test/data/simple.zip', {
+      outputPath,
+      disableSave: true,
+      disableOutput: true,
+      rules: [{ pattern: /^README.md/, disableSave: false, disableOutput: false }],
+    });
+    expect(typeof output.duration).to.equal('number');
+    expect(output.files.length).to.equal(1);
     expect(output.files[0].name).to.equal('README.md');
     expect(output.files[0].saved).to.equal(true);
     const stat = await fsp.stat(path.join(outputPath, output.files[0].name));

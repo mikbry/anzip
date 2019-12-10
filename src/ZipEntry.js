@@ -31,7 +31,24 @@ export default class ZipEntry {
     this.saved = false;
   }
 
-  async init(outputContent) {
+  buildParameters(_parameters, rules = []) {
+    let parameters;
+    if (
+      !rules.some(p => {
+        if (p.pattern.test(this.filename)) {
+          parameters = { ..._parameters, ...p };
+          return true;
+        }
+        return false;
+      })
+    ) {
+      parameters = { ..._parameters };
+    }
+    return parameters;
+  }
+
+  async init(_parameters, rules) {
+    const parameters = this.buildParameters(_parameters, rules);
     const openReadStream = util.promisify(this.zipFile.openReadStream.bind(this.zipFile));
     this.stream = await openReadStream(this.entry);
     this.stream.on('end', () => {
@@ -40,12 +57,13 @@ export default class ZipEntry {
         this.content = Buffer.concat(this.chunks);
       }
     });
-    if (this.filename && outputContent) {
+    if (this.filename && parameters.outputContent) {
       this.chunks = [];
       this.stream.on('data', chunk => {
         this.chunks.push(chunk);
       });
     }
+    return parameters;
   }
 
   async drain() {

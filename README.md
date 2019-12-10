@@ -1,19 +1,20 @@
-# anzip
-Node nice Async unzip library
+# anzip [![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
+> Anzip is a library to unzip file archive for Node using only one async function.
 
-[![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
 
 
 ### Purpose
 - Simple to use
-- Modern ES6 syntax (import instead of require, await/async, ...)
+- Modern ES6+ syntax (import instead of require, await/async, ...)
 - Unzip by [Yauzl](https://github.com/thejoshwolfe/yauzl/)
 - Follows [Node best practices](https://github.com/goldbergyoni/nodebestpractices)
 
+___
 
 ### Requirements
 - Node >= 10
 
+---
 
 ### Install
 ```
@@ -25,52 +26,62 @@ Or using npm
 npm add anzip
 ````
 
+---
 
 ### Usage
+> Now that ESM support is widely common, `require` should be forgotten.
 
 ```
 import anzip from 'anzip';
 ```
 
+
+> Extract file.zip to current path
+
 ```
-// Extract file.zip to current path
 await anzip('file.zip');
 ```
 
+
+> Extract file.zip to the current path and get output
+
 ```
-// Extract file.zip to the current path and get output
 const output = await anzip('file.zip');
 console.log('duration=', output.duration);
 console.log('number of files=', output.files.length);
 ```
 
+> Extract only README.md from file.zip to current path
 ```
-// Extract only README.md from file.zip to current path
 const output = await anzip('file.zip', { pattern: 'README.md', });
 console.log('duration=', output.duration);
 console.log('number of files=', output.files.length); // Should be one
 ```
 
+> Extract only README.md from file.zip to output content variable
+
 ```
-// Extract only README.md from file.zip to output content variable
 const output = await anzip('file.zip', { pattern: 'README.md', outputContent: true });
 console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
 ```
 
+> Extract only README.md from file.zip to output content variable and currentpath
 ```
-// Extract only README.md from file.zip to output content variable and currentpath
 const output = await anzip('file.zip', { pattern: 'README.md', outputPath: './', outputContent: true });
 console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
 ```
 
+ ---
+
 ### Documentation
-One function to rule them all.
+> One function to rule them all.
 
 `output = await anzip(filename, {opts})`
 
-Function's Properties
+**Function properties**
+
 | parameters | type | description |
 | ----------- | --- | ----------- |
 | filename     | mandatory string | containing zip path to + file |
@@ -86,7 +97,7 @@ Function's Properties
 | opts.rules.pattern | mandatory regex | if it match entry will use rule's parameters instead of global's one |
 
 
-Returned output is an object containing:
+**Returned output is an object containing:**
 | parameters | type | description |
 | ----------- | --- | ----------- |
 | duration | number | how long it took to extract in seconds |
@@ -96,3 +107,5 @@ Returned output is an object containing:
 | files[x].saved | boolean | true if the file was saved to outputPath |
 | files[x].content | Buffer | the content of the file available if opts.outputContent=true or rule.outputContent=true |
 | files[x].error | Error | if an error occured |
+
+---

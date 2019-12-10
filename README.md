@@ -1,13 +1,17 @@
 # anzip
-Node simple Async unzip library
+Node nice Async unzip library
 
-[![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip)
+[![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
+
+
 
 - Simple to use
 - Modern ES6 syntax (import instead of require, await/async, ...)
 - Unzip using [Yauzl](https://github.com/thejoshwolfe/yauzl/)
 - Follows [Node best practices](https://github.com/goldbergyoni/nodebestpractices)
 
+### Requirements
+- Node >= 10
 
 ### Usage
 

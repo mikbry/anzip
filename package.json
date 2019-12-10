@@ -1,6 +1,6 @@
 {
   "name": "anzip",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Node Async Unzip Lib",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

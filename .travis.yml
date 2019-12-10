@@ -1,6 +1,13 @@
 language: node_js
 
 node_js:
+  - 13
   - 12
   - 11
   - 10
+
+install:
+  - npm install -g codecov
+script:
+  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - codecov

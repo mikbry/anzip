@@ -1,7 +1,15 @@
 # anzip
-Node Async unzip lib
+Node simple Async unzip library
 
-Anzip uses [Yauzl](https://github.com/thejoshwolfe/yauzl/) to unzip.
+[![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip)
+
+- Simple to use
+- Modern ES6 syntax
+- Unzip using [Yauzl](https://github.com/thejoshwolfe/yauzl/)
+- Follows [Node best practices](https://github.com/goldbergyoni/nodebestpractices)
+
+
+### Usage
 
 ```
 import anzip from 'anzip';

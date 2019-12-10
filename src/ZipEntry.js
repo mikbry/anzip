@@ -5,9 +5,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+import fs from 'fs';
+import path from 'path';
 import stream from 'stream';
 import util from 'util';
 
+const pipeline = util.promisify(stream.pipeline);
 const finished = util.promisify(stream.finished);
 export default class ZipEntry {
   constructor(zipFile, entry) {
@@ -25,6 +28,7 @@ export default class ZipEntry {
         this.filename = entry.fileName;
       }
     }
+    this.saved = false;
   }
 
   async init(outputContent) {
@@ -55,5 +59,22 @@ export default class ZipEntry {
 
   async getContent() {
     return finished(this.stream);
+  }
+
+  async saveTo(outputPath, flattenPath) {
+    let { filename } = this;
+    try {
+      if (!flattenPath && this.directory) {
+        filename = path.join(this.directory, filename);
+      }
+      const f = path.join(outputPath, filename);
+      const ws = fs.createWriteStream(f, { flags: 'a' });
+      await pipeline(this.stream, ws);
+      this.saved = true;
+    } catch (err) {
+      /* istanbul ignore next */
+      // eslint-disable-next-line no-param-reassign
+      this.error = err;
+    }
   }
 }

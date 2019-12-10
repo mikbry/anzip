@@ -2,8 +2,7 @@
   "name": "anzip",
   "version": "0.1.0",
   "description": "Node Async Unzip Lib",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "src/index.js",
   "repository": "https://github.com/mikbry/anzip.git",
   "bugs": "https://github.com/mikbry/anzip/issues",
   "homepage": "https://github.com/mikbry/anzip",
@@ -13,8 +12,8 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "lint": "$(yarn bin)/eslint src",
-    "test": "cross-env NODE_ENV=test  $(yarn bin)/mocha  --require esm __tests__",
-    "coverage": "$(yarn bin)/nyc yarn test"
+    "test": "cross-env NODE_ENV=test  $(yarn bin)/mocha  --require esm test",
+    "coverage": "$(yarn bin)/nyc _mocha  test"
   },
   "engines": {
     "node": ">=10"

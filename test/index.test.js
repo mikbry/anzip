@@ -22,9 +22,8 @@ describe('anzip', async () => {
   });
 
   it('should extract an empty zip file', async () => {
-    const output = await anzip('./__tests__/data/empty.zip');
+    const output = await anzip('./test/data/empty.zip');
     // console.log('duration %ds', output.duration.toFixed(2));
-    // console.log('output', output);
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(0);
   });
@@ -32,7 +31,7 @@ describe('anzip', async () => {
   it('should extract a simple zip file', async () => {
     const outputPath = path.join(TMP_PATH, 't1');
     await fsp.mkdir(outputPath, { recursive: true });
-    const output = await anzip('./__tests__/data/simple.zip', { outputPath });
+    const output = await anzip('./test/data/simple.zip', { outputPath });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
     expect(output.files[0].name).to.equal('README.md');
@@ -43,7 +42,7 @@ describe('anzip', async () => {
   it('should extract a simple zip file in content', async () => {
     const outputPath = path.join(TMP_PATH, 't2');
     await fsp.mkdir(outputPath, { recursive: true });
-    const output = await anzip('./__tests__/data/simple.zip', { outputPath, outputContent: true });
+    const output = await anzip('./test/data/simple.zip', { outputPath, outputContent: true });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
     expect(output.files[0].name).to.equal('README.md');
@@ -54,20 +53,39 @@ describe('anzip', async () => {
   });
 
   it('should extract a simple zip file in content without writing file', async () => {
-    const output = await anzip('./__tests__/data/simple.zip', { outputContent: true });
+    const output = await anzip('./test/data/simple.zip', { outputContent: true });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(2);
     expect(output.files[0].name).to.equal('README.md');
     expect(output.files[0].content.toString()).to.equal('Hello World');
-    expect(output.files[0].saved).to.equal(undefined);
+    expect(output.files[0].saved).to.equal(false);
   });
 
-  it('should extract a simple zip one file from pattern #dev', async () => {
+  it('should extract a simple zip one file from pattern', async () => {
     const outputPath = path.join(TMP_PATH, 't3');
     await fsp.mkdir(outputPath, { recursive: true });
-    const output = await anzip('./__tests__/data/simple.zip', { outputPath, pattern: /^README.md/ });
+    const output = await anzip('./test/data/simple.zip', { outputPath, pattern: /^README.md/ });
     expect(typeof output.duration).to.equal('number');
     expect(output.files.length).to.equal(1);
+    expect(output.files[0].name).to.equal('README.md');
+    expect(output.files[0].saved).to.equal(true);
+    const stat = await fsp.stat(path.join(outputPath, output.files[0].name));
+    expect(stat.isFile()).to.equal(true);
+  });
+
+  it('should extract a simple zip using an entryHandler', async () => {
+    const outputPath = path.join(TMP_PATH, 't4');
+    await fsp.mkdir(outputPath, { recursive: true });
+    const entryHandler = async entry => {
+      if (entry.filename === 'README.md') {
+        await entry.saveTo(outputPath);
+        return false;
+      }
+      return true;
+    };
+    const output = await anzip('./test/data/simple.zip', { entryHandler });
+    expect(typeof output.duration).to.equal('number');
+    expect(output.files.length).to.equal(2);
     expect(output.files[0].name).to.equal('README.md');
     expect(output.files[0].saved).to.equal(true);
     const stat = await fsp.stat(path.join(outputPath, output.files[0].name));

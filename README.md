@@ -30,6 +30,3 @@ console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
 
 ```
-
-
-Hello WorldHello WorldHello World

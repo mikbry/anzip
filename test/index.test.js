@@ -5,20 +5,24 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { expect } from 'chai';
 import path from 'path';
 import fs from 'fs';
+import rimraf from 'rimraf';
+import { expect } from 'chai';
 import anzip from '../src';
 
 const fsp = fs.promises;
 const TMP_PATH = './tmp_test';
 describe('anzip', async () => {
   before(async () => {
+    // Recursive is node >= 12
     await fsp.mkdir(TMP_PATH, { recursive: true });
   });
 
   after(async () => {
-    await fsp.rmdir(TMP_PATH, { recursive: true });
+    // Recursive is node >= 12
+    // await fsp.rmdir(TMP_PATH, { recursive: true });
+    rimraf.sync(TMP_PATH);
   });
 
   it('should extract an empty zip file', async () => {

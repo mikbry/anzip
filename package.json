@@ -1,8 +1,9 @@
 {
   "name": "anzip",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Node Async Unzip Lib",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "type": "module",
   "repository": "https://github.com/mikbry/anzip.git",
   "bugs": "https://github.com/mikbry/anzip/issues",

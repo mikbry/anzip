@@ -4,5 +4,11 @@ node_module
 *config*
 yarn.lock
 coverage
-cov
+.nyc_output
 .nycrc
+data
+rollup.config.js
+.eslintrc
+commitlint.config.js
+yarn-error.js
+.travis.yml

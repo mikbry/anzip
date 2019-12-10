@@ -4,7 +4,7 @@ Node simple Async unzip library
 [![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip)
 
 - Simple to use
-- Modern ES6 syntax
+- Modern ES6 syntax (import instead of require, await/async, ...)
 - Unzip using [Yauzl](https://github.com/thejoshwolfe/yauzl/)
 - Follows [Node best practices](https://github.com/goldbergyoni/nodebestpractices)
 

@@ -9,5 +9,6 @@ node_js:
 install:
   - npm install -g codecov
 script:
-  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - yarn coverage
+  - yarn report-coverage
   - codecov

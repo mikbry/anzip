@@ -16,7 +16,7 @@
     "lint": "$(yarn bin)/eslint src",
     "test": "cross-env NODE_ENV=test  $(yarn bin)/mocha  --require esm test",
     "coverage": "$(yarn bin)/nyc _mocha  test",
-    "report-coverage": "yarn workspaces run report-coverage",
+    "report-coverage": "$(yarn bin)/nyc report --reporter=text-lcov > coverage.lcov",
     "prepublishOnly": "yarn build"
   },
   "engines": {

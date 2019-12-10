@@ -98,6 +98,7 @@ console.log('content=', output.files[0].content);
 
 
 **Returned output is an object containing:**
+
 | parameters | type | description |
 | ----------- | --- | ----------- |
 | duration | number | how long it took to extract in seconds |

@@ -8,6 +8,7 @@ node_js:
 
 install:
   - npm install -g codecov
+  - yarn
 script:
   - yarn coverage
   - yarn report-coverage

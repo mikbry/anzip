@@ -32,19 +32,18 @@ export default class ZipEntry {
   }
 
   buildParameters(_parameters, rules = []) {
-    let parameters;
     if (
       !rules.some(p => {
         if (p.pattern.test(this.filename)) {
-          parameters = { ..._parameters, ...p };
+          this.parameters = { ..._parameters, ...p };
           return true;
         }
         return false;
       })
     ) {
-      parameters = { ..._parameters };
+      this.parameters = { ..._parameters };
     }
-    return parameters;
+    return this.parameters;
   }
 
   async init(_parameters, rules) {
@@ -79,14 +78,14 @@ export default class ZipEntry {
     return finished(this.stream);
   }
 
-  async saveTo(outputPath, flattenPath) {
+  async saveTo(outputPath, flattenPath = this.parameters.flattenPath) {
     let { filename } = this;
     try {
       if (!flattenPath && this.directory) {
         filename = path.join(this.directory, filename);
       }
       const f = path.join(outputPath, filename);
-      const ws = fs.createWriteStream(f, { flags: 'a' });
+      const ws = fs.createWriteStream(f);
       await pipeline(this.stream, ws);
       this.saved = true;
     } catch (err) {

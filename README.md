@@ -1,4 +1,4 @@
-# anzip [![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU&branch=master)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
+# anzip [![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
 > Anzip is a library to unzip file archive for Node using only one async function.
 
 
@@ -72,6 +72,63 @@ const output = await anzip('file.zip', { pattern: 'README.md', outputPath: './',
 console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
 ```
+
+> Extract with an entryHandler to fliter entry
+
+```
+const outputPath = './path';
+const entryHandler = async entry => {
+  let resp = true;
+  const fn = entry.name;
+  if (fn.endsWith('dummy.pdf')) {
+    try {
+      await entry.saveTo(outputPath);
+      resp = false;
+    } catch (e) {
+      //
+    }
+  }
+  return resp;
+};
+const output = await anzip('file.zip',
+    outputPath,
+    { pattern: /(^(?!\.))(.+(.png|.jpeg|.jpg|.svg|.pdf|.json))$/i,, outputPath: './', entryHandler, outputContent: true });
+console.log('duration=', output.duration);
+// ./path/dummy.pdf should be saved
+```
+
+> Extract using 2 rules and an entryHandler in one to fliter entry
+
+```
+const outputPath = './path';
+const entryHandler = async entry => {
+  let resp = true;
+  const fn = entry.name;
+  if (fn.endsWith('dummy.pdf')) {
+    try {
+      await entry.saveTo(outputPath);
+      resp = false;
+    } catch (e) {
+      //
+    }
+  }
+  return resp;
+};
+const output = await anzip('file.zip',
+    outputPath,
+    pattern: /(^(?!\.))(.+(.png|.jpeg|.jpg|.svg|.pdf|.json))$/i,
+    flattenPath: true,
+    disableSave: true,
+    disableOutput: true,
+    rules: [
+      { pattern: /(^(?!\.))(test.json)$/i, outputContent: true },
+      { pattern: /(^(?!\.))(.+(.png|.jpeg|.jpg|.svg|.pdf))$/i, entryHandler },
+    ],
+  });
+console.log('duration=', output.duration);
+// ./path/dummy.pdf should be saved
+```
+
 
  ---
 

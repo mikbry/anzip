@@ -1,4 +1,19 @@
-# anzip [![Build Status](https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU)](https://travis-ci.com/mikbry/anzip) [![codecov](https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh)](https://codecov.io/gh/mikbry/anzip)
+# Anzip
+
+[![Build Status][travis-image]][travis-url]
+[![codecov][codecov-image]][codecov-url]
+[![NPM version][npm-image]][npm-url]
+[![License][license-image]][license-url]
+
+[travis-image]: https://travis-ci.com/mikbry/anzip.svg?token=mRB1zwsyoRAKcamR2qpU
+[travis-url]: https://travis-ci.com/mikbry/anzip
+[codecov-image]: https://codecov.io/gh/mikbry/anzip/branch/master/graph/badge.svg?token=K4P0vnM5fh
+[codecov-url]: https://codecov.io/gh/mikbry/anzip
+[npm-image]: https://img.shields.io/npm/v/anzip.svg
+[npm-url]: https://npmjs.org/package/anzip
+[license-image]: https://img.shields.io/npm/l/anzip.svg
+[License-url]:./LICENSE
+
 > Anzip is a library to unzip file archive for Node using only one async function.
 
 
@@ -17,12 +32,12 @@ ___
 ---
 
 ### Install
-```
+```bash
 yarn add anzip
 ````
 
 Or using npm
-```
+```bash
 npm add anzip
 ````
 
@@ -31,28 +46,29 @@ npm add anzip
 ### Usage
 > Now that ESM support is widely common, `require` should be forgotten.
 
-```
+```javascript
 import anzip from 'anzip';
 ```
 
 
 > Extract file.zip to current path
 
-```
+```javascript
 await anzip('file.zip');
 ```
 
 
 > Extract file.zip to the current path and get output
 
-```
+```javascript
 const output = await anzip('file.zip');
 console.log('duration=', output.duration);
 console.log('number of files=', output.files.length);
 ```
 
 > Extract only README.md from file.zip to current path
-```
+
+```javascript
 const output = await anzip('file.zip', { pattern: 'README.md', });
 console.log('duration=', output.duration);
 console.log('number of files=', output.files.length); // Should be one
@@ -60,14 +76,15 @@ console.log('number of files=', output.files.length); // Should be one
 
 > Extract only README.md from file.zip to output content variable
 
-```
+```javascript
 const output = await anzip('file.zip', { pattern: 'README.md', outputContent: true });
 console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
 ```
 
 > Extract only README.md from file.zip to output content variable and currentpath
-```
+
+```javascript
 const output = await anzip('file.zip', { pattern: 'README.md', outputPath: './', outputContent: true });
 console.log('duration=', output.duration);
 console.log('content=', output.files[0].content);
@@ -75,7 +92,7 @@ console.log('content=', output.files[0].content);
 
 > Extract with an entryHandler to fliter entry
 
-```
+```javascript
 const outputPath = './path';
 const entryHandler = async entry => {
   let resp = true;
@@ -99,7 +116,7 @@ console.log('duration=', output.duration);
 
 > Extract using 2 rules and an entryHandler in one to fliter entry
 
-```
+```javascript
 const outputPath = './path';
 const entryHandler = async entry => {
   let resp = true;
@@ -167,3 +184,6 @@ console.log('duration=', output.duration);
 | files[x].error | Error | if an error occured |
 
 ---
+## Contribution
+
+Read [Contributing Guide](CONTRIBUTING.md) for development setup instructions.

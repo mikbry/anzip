@@ -10,6 +10,7 @@ import path from 'path';
 import stream from 'stream';
 import util from 'util';
 
+const fsp = fs.promises;
 const pipeline = util.promisify(stream.pipeline);
 const finished = util.promisify(stream.finished);
 export default class ZipEntry {
@@ -55,6 +56,7 @@ export default class ZipEntry {
       if (this.chunks) {
         this.content = Buffer.concat(this.chunks);
       }
+      this.stream = null;
     });
     if (this.filename && parameters.outputContent) {
       this.chunks = [];
@@ -65,17 +67,20 @@ export default class ZipEntry {
     return parameters;
   }
 
-  async drain() {
-    this.stream.unpipe();
-    this.zipFile.readEntry();
-  }
-
-  async close() {
-    this.stream.unpipe();
+  async close(shouldDrain) {
+    if (this.stream) {
+      this.stream.unpipe();
+    }
+    if (shouldDrain) {
+      this.zipFile.readEntry();
+    }
   }
 
   async getContent() {
-    return finished(this.stream);
+    if (this.parameters.outputContent && !this.content && !this.saved && this.stream) {
+      await finished(this.stream);
+    }
+    return this.content;
   }
 
   async saveTo(outputPath, flattenPath = this.parameters.flattenPath) {
@@ -93,5 +98,46 @@ export default class ZipEntry {
       // eslint-disable-next-line no-param-reassign
       this.error = err;
     }
+    return this.saved;
+  }
+
+  async proceed(opts, output) {
+    const {
+      pattern,
+      disableSave,
+      outputContent,
+      entryHandler,
+      outputPath,
+      flattenPath,
+      disableOutput,
+    } = this.parameters;
+    const { filename: name, directory } = this;
+    let shouldDrain = true;
+    if (!name && directory && !flattenPath && outputPath) {
+      await fsp.mkdir(path.join(outputPath, directory), { recursive: true });
+    } else if (this.filename) {
+      const data = { name };
+      if (directory) {
+        data.directory = directory;
+      }
+      if (!pattern || pattern.test(name)) {
+        if (!disableOutput || outputContent) {
+          output.files.push(data);
+        }
+        if (!entryHandler || (await entryHandler(this, data, opts))) {
+          if (!disableSave && outputPath) {
+            // saveTo
+            await this.saveTo(outputPath, flattenPath);
+          }
+        }
+        data.saved = this.saved;
+        const content = await this.getContent();
+        if (content) {
+          data.content = content;
+        }
+        shouldDrain = !(data.content || data.saved);
+      }
+    }
+    return this.close(shouldDrain);
   }
 }

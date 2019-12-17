@@ -1,9 +1,11 @@
 src
-node_module
+test
+node_modules
 *.DS_Store
 *config*
 yarn.lock
 coverage
+.github
 .nyc_output
 .nycrc
 data

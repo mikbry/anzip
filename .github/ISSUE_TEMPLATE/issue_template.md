@@ -1,7 +1,7 @@
 ---
 name: Tracking issue
-about: New features.
-title: "[DATE]: [FEATURE NAME]"
+about: New Issue.
+title: "[feat|bug|docs]: [issue title]"
 labels: tracking issue, needs triage
 assignees: mikbry
 ---

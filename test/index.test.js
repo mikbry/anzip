@@ -80,7 +80,7 @@ describe('anzip', async () => {
   it('should extract a simple zip using an entryHandler', async () => {
     const outputPath = path.join(TMP_PATH, 't4');
     await fsp.mkdir(outputPath, { recursive: true });
-    const entryHandler = async entry => {
+    const entryHandler = async (entry) => {
       if (entry.filename === 'README.md') {
         await entry.saveTo(outputPath);
         return false;

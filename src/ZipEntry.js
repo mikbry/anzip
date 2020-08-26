@@ -12,7 +12,7 @@ import util from 'util';
 
 const fsp = fs.promises;
 const pipeline = util.promisify(stream.pipeline);
-const finished = util.promisify(stream.finished);
+// const finished = util.promisify(stream.finished);
 export default class ZipEntry {
   constructor(zipFile, entry) {
     this.zipFile = zipFile;
@@ -34,7 +34,7 @@ export default class ZipEntry {
 
   buildParameters(_parameters, rules = []) {
     if (
-      !rules.some(p => {
+      !rules.some((p) => {
         if (p.pattern.test(this.filename)) {
           this.parameters = { ..._parameters, ...p };
           return true;
@@ -51,16 +51,9 @@ export default class ZipEntry {
     const parameters = this.buildParameters(_parameters, rules);
     const openReadStream = util.promisify(this.zipFile.openReadStream.bind(this.zipFile));
     this.stream = await openReadStream(this.entry);
-    this.stream.on('end', () => {
-      this.zipFile.readEntry();
-      if (this.chunks) {
-        this.content = Buffer.concat(this.chunks);
-      }
-      this.stream = null;
-    });
     if (this.filename && parameters.outputContent) {
       this.chunks = [];
-      this.stream.on('data', chunk => {
+      this.stream.on('data', (chunk) => {
         this.chunks.push(chunk);
       });
     }
@@ -76,9 +69,22 @@ export default class ZipEntry {
     }
   }
 
+  cleanup() {
+    if (this.chunks) {
+      this.content = Buffer.concat(this.chunks);
+    }
+    this.zipFile.readEntry();
+    this.stream = null;
+  }
+
   async getContent() {
     if (this.parameters.outputContent && !this.content && !this.saved && this.stream) {
-      await finished(this.stream);
+      await new Promise((resolve) =>
+        this.stream.on('end', () => {
+          resolve();
+        }),
+      );
+      this.cleanup();
     }
     return this.content;
   }
@@ -92,6 +98,7 @@ export default class ZipEntry {
       const f = path.join(outputPath, filename);
       const ws = fs.createWriteStream(f);
       await pipeline(this.stream, ws);
+      this.cleanup();
       this.saved = true;
     } catch (err) {
       /* istanbul ignore next */

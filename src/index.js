@@ -30,21 +30,22 @@ const anzip = async (
   const zipFile = await zipOpen(filename, { lazyEntries: true });
   return new Promise((resolve, reject) => {
     zipFile.readEntry();
-    zipFile.on('entry', async e => {
+    const func = async (e) => {
       const entry = new ZipEntry(zipFile, e);
       await entry.init(
         { pattern, disableSave, outputContent, entryHandler, outputPath, flattenPath, disableOutput },
         rules,
       );
-      await entry.proceed(opts, output);
-    });
+      return entry.proceed(opts, output);
+    };
+    zipFile.on('entry', (e) => func(e).then());
     zipFile.on('end', () => {
       const hr = process.hrtime(hrstart);
       output.duration = hr[0] + hr[1] / 100000000;
       resolve(output);
     });
     /* istanbul ignore next */
-    zipFile.on('error', err => {
+    zipFile.on('error', (err) => {
       reject(err);
     });
   });
